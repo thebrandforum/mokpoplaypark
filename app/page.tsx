@@ -64,17 +64,28 @@ export default function NewHomePage() {
         const homepageResponse = await fetch("/api/admin/homepage-settings");
         const homepageResult = await homepageResponse.json();
 
+        console.log('📥 homepage-settings API 응답:', homepageResult);
+
         if (result.success) {
           setSettings(result.data);
         }
 
         if (homepageResult.success && homepageResult.data) {
+          console.log('📋 homepageResult.data:', homepageResult.data);
+          console.log('📋 consultationHours:', homepageResult.data.consultationHours);
+
+          // settings state에 homepage_settings 추가
+          setSettings(prev => ({
+            ...prev,
+            homepage_settings: homepageResult.data
+          }));
+
           // 메인 이미지 설정
           if (homepageResult.data.mainImages) {
             const imageUrls = homepageResult.data.mainImages.map(
               (img) => img.url
             );
-            setMainImages(imageUrls); // 기존 mainImages state를 동적으로 변경
+            setMainImages(imageUrls);
           }
 
           // 연락처 정보 설정
@@ -465,12 +476,12 @@ export default function NewHomePage() {
                 <h3 className="font-bold text-white text-base sm:text-lg mb-2">
                   이용권 구매
                 </h3>
-                <a
-                  href="/reservation"
-                  className="inline-block bg-white text-orange-600 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm sm:text-base hover:scale-105 transition-transform mt-2"
+                <button
+                  className="inline-block bg-white text-orange-600 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold text-sm                 sm:text-base hover:scale-105 transition-transform mt-2"
+                  disabled
                 >
                   결제는 현장에서만 가능합니다
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -555,39 +566,27 @@ export default function NewHomePage() {
               </div>
             </div>
 
-            {/* 문의 정보 카드들 - 1칸에 2개 세로 배치 */}
+            {/* 문의 정보 카드들 - 현장문의만 */}
             <div className="flex flex-col h-full gap-3">
               {/* 현장 문의 카드 */}
-              <div className="flex-1 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center">
+              <div className="flex-1 bg-gradient-to-br from-orange-400 to-orange-500 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
 
                 <div className="relative z-10 text-center">
                   <h2 className="text-lg sm:text-xl font-bold mb-3">
                     현장문의
                   </h2>
-                  <p className="text-2xl sm:text-3xl font-bold">
+                  <p className="text-2xl sm:text-3xl font-bold mb-4">
                     {contactInfo?.fieldPhone ||
                       settings?.basic_info?.phone ||
                       "061-272-8663"}
                   </p>
-                </div>
-              </div>
-
-              {/* 고객센터 카드 */}
-              <div className="flex-1 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col justify-center">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-12 -mt-12"></div>
-
-                <div className="relative z-10 text-center">
-                  <h2 className="text-lg sm:text-xl font-bold mb-3">
-                    예약센터
-                  </h2>
-                  <p className="text-2xl sm:text-3xl font-bold mb-2">
-                    {contactInfo?.customerService || "1588-0000"}
-                  </p>
-                  <div className="text-sm text-white/90 space-y-1">
-                    <p>상담시간: 10:00 ~18:00</p>
-                    <p>점심시간: 12:00 ~13:00</p>
-                  </div>
+                  {settings?.homepage_settings?.consultationHours && (
+                    <div className="text-sm text-white/90 space-y-1">
+                      <p>상담시간: {settings.homepage_settings.consultationHours.start} ~{settings.homepage_settings.consultationHours.end}</p>
+                      <p>점심시간: {settings.homepage_settings.consultationHours.lunchStart} ~{settings.homepage_settings.consultationHours.lunchEnd}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

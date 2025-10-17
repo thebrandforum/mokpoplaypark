@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AdminLayout } from '../../../components/admin/admin-layout'
-import { PhotoIcon, PhoneIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PhotoIcon, PhoneIcon, TrashIcon, ClockIcon } from '@heroicons/react/24/outline'
 
 export default function AdminHomepagePage() {
   const router = useRouter()
@@ -19,7 +19,14 @@ export default function AdminHomepagePage() {
   // 연락처 정보 상태
   const [contactInfo, setContactInfo] = useState({
     fieldPhone: '',      // 현장 문의
-    customerService: ''  // 고객센터
+  })
+
+  // 상담시간 정보 상태
+  const [consultationHours, setConsultationHours] = useState({
+    start: '',
+    end: '',
+    lunchStart: '',
+    lunchEnd: ''
   })
 
   // 초기 데이터 로드
@@ -42,6 +49,11 @@ export default function AdminHomepagePage() {
         // 연락처 정보 설정
         if (result.data.contactInfo) {
           setContactInfo(result.data.contactInfo)
+        }
+
+        // 상담시간 정보 설정
+        if (result.data.consultationHours) {
+          setConsultationHours(result.data.consultationHours)
         }
       }
     } catch (error) {
@@ -191,7 +203,8 @@ export default function AdminHomepagePage() {
         },
         body: JSON.stringify({
           mainImages,
-          contactInfo
+          contactInfo,
+          consultationHours
         })
       })
 
@@ -322,20 +335,70 @@ export default function AdminHomepagePage() {
                 홈페이지에 표시되는 현장 문의 전화번호입니다.
               </p>
             </div>
-            
+          </div>
+        </div>
+
+        {/* 상담시간 정보 관리 */}
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+            <ClockIcon className="w-5 h-5 mr-2 text-green-500" />
+            상담시간
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                고객센터
+                상담 시작 시간
               </label>
               <input
-                type="tel"
-                value={contactInfo.customerService}
-                onChange={(e) => setContactInfo({ ...contactInfo, customerService: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                placeholder="예: 1588-1234"
+                type="time"
+                value={consultationHours.start}
+                onChange={(e) => setConsultationHours({ ...consultationHours, start: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-500 mt-1">
-                홈페이지에 표시되는 고객센터 전화번호입니다.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                상담 종료 시간
+              </label>
+              <input
+                type="time"
+                value={consultationHours.end}
+                onChange={(e) => setConsultationHours({ ...consultationHours, end: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                점심 시작 시간
+              </label>
+              <input
+                type="time"
+                value={consultationHours.lunchStart}
+                onChange={(e) => setConsultationHours({ ...consultationHours, lunchStart: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                점심 종료 시간
+              </label>
+              <input
+                type="time"
+                value={consultationHours.lunchEnd}
+                onChange={(e) => setConsultationHours({ ...consultationHours, lunchEnd: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500 mt-1">
               </p>
             </div>
           </div>

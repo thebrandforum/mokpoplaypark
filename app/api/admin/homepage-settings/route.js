@@ -26,21 +26,8 @@ export async function GET() {
       throw error
     }
 
-    // 기본값 설정
-    const defaultSettings = {
-      mainImages: [
-        { id: 1, url: '/images/hero/main1.jpg', file: null },
-        { id: 2, url: '/images/hero/main2.jpg', file: null },
-        { id: 3, url: '/images/hero/main3.jpg', file: null }
-      ],
-      contactInfo: {
-        fieldPhone: '061-272-8663',
-        customerService: '1588-0000'
-      }
-    }
-
-    // 데이터가 있으면 사용, 없으면 기본값
-    const settings = data?.homepage_settings || defaultSettings
+    // DB에 있는 데이터만 반환 (없으면 null)
+    const settings = data?.homepage_settings || null
 
     return NextResponse.json({ 
       success: true, 
@@ -62,9 +49,9 @@ export async function POST(request) {
     console.log('📤 홈페이지 설정 저장 시작...')
     
     const body = await request.json()
-    const { mainImages, contactInfo } = body
+    const { mainImages, contactInfo, consultationHours } = body
 
-    console.log('저장할 데이터:', { mainImages, contactInfo })
+    console.log('저장할 데이터:', { mainImages, contactInfo, consultationHours })
 
     // 유효성 검사
     if (!mainImages || !contactInfo) {
@@ -80,7 +67,8 @@ export async function POST(request) {
       .update({ 
         homepage_settings: {
           mainImages,
-          contactInfo
+          contactInfo,
+          consultationHours
         }
       })
       .eq('id', 1)
@@ -92,7 +80,7 @@ export async function POST(request) {
 
     // 현장 문의 번호는 basic_info의 phone에도 업데이트
     if (contactInfo.fieldPhone) {
-      // 먼저 현재 basic_info 조회 (id=2)
+      // 먼저 현재 basic_info 조회
       const { data: currentData, error: fetchError } = await supabase
         .from('settings')
         .select('setting_value')
