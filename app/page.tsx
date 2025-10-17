@@ -584,7 +584,6 @@ export default function NewHomePage() {
                   {settings?.homepage_settings?.consultationHours && (
                     <div className="text-sm text-white/90 space-y-1">
                       <p>상담시간: {settings.homepage_settings.consultationHours.start} ~{settings.homepage_settings.consultationHours.end}</p>
-                      <p>점심시간: {settings.homepage_settings.consultationHours.lunchStart} ~{settings.homepage_settings.consultationHours.lunchEnd}</p>
                     </div>
                   )}
                 </div>

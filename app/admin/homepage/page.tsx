@@ -21,12 +21,10 @@ export default function AdminHomepagePage() {
     fieldPhone: '',      // 현장 문의
   })
 
-  // 상담시간 정보 상태
+  // 상담시간 정보 상태 (점심시간 제거)
   const [consultationHours, setConsultationHours] = useState({
     start: '',
-    end: '',
-    lunchStart: '',
-    lunchEnd: ''
+    end: ''
   })
 
   // 초기 데이터 로드
@@ -368,34 +366,6 @@ export default function AdminHomepagePage() {
                 type="time"
                 value={consultationHours.end}
                 onChange={(e) => setConsultationHours({ ...consultationHours, end: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                점심 시작 시간
-              </label>
-              <input
-                type="time"
-                value={consultationHours.lunchStart}
-                onChange={(e) => setConsultationHours({ ...consultationHours, lunchStart: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                점심 종료 시간
-              </label>
-              <input
-                type="time"
-                value={consultationHours.lunchEnd}
-                onChange={(e) => setConsultationHours({ ...consultationHours, lunchEnd: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
               <p className="text-xs text-gray-500 mt-1">
