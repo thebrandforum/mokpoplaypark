@@ -1,0 +1,152 @@
+{
+  "name": "adventure-park-reservation",
+  "version": "2.0.0",
+  "description": "어드벤처파크 온라인 입장권 예약 및 관리 시스템 - Supabase PostgreSQL 기반",
+  "author": "Adventure Park Development Team",
+  "license": "MIT",
+  "keywords": [
+    "reservation",
+    "adventure-park",
+    "nextjs",
+    "supabase",
+    "postgresql",
+    "booking-system",
+    "sms",
+    "qr-code",
+    "typescript",
+    "tailwindcss"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/adventure-park-reservation.git"
+  },
+  "homepage": "https://adventure-park-system.vercel.app",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "db:generate-types": "npx supabase gen types typescript --project-id rplkcijqbksheqcnvjlf > lib/database.types.ts",
+    "db:reset": "npx supabase db reset",
+    "db:migrate": "npx supabase migration up"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@supabase/supabase-js": "^2.50.0",
+    "@types/qrcode": "^1.5.5",
+    "@zxing/library": "^0.21.3",
+    "autoprefixer": "^10.4.21",
+    "coolsms-node-sdk": "^2.1.0",
+    "lucide-react": "^0.525.0",
+    "next": "15.1.0",
+    "next-pwa": "^5.6.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "solapi": "^5.4.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "eslint": "^9.15.0",
+    "eslint-config-next": "15.1.0",
+    "postcss": "^8.5.5",
+    "supabase": "^1.200.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "database": {
+    "provider": "supabase",
+    "type": "postgresql",
+    "url": "https://rplkcijqbksheqcnvjlf.supabase.co",
+    "version": "15.x"
+  },
+  "features": {
+    "completed": [
+      "실시간 예약 시스템 (Supabase PostgreSQL)",
+      "입력 검증 (이름/전화번호/이메일)",
+      "관리자 설정 연동 (실시간 반영)",
+      "휴무일 시스템 (요일별 설정)",
+      "가격 계산 (단체할인 포함)",
+      "QR코드 생성 및 스캐너",
+      "SMS 발송 구조 (Cool SMS)",
+      "예약 확인 시스템 (검색/QR다운로드)",
+      "관리자 예약 관리 (목록/상세/삭제)",
+      "고객 이력 및 통계",
+      "설정 실시간 반영"
+    ],
+    "in_progress": [
+      "결제 연동 (토스페이먼츠)",
+      "관리자 로그인 시스템",
+      "대시보드 실시간 차트"
+    ],
+    "planned": [
+      "이메일 알림 시스템",
+      "고급 통계 및 분석",
+      "모바일 앱 (React Native)",
+      "다국어 지원",
+      "API 문서화 (Swagger)"
+    ]
+  },
+  "database_tables": [
+    "reservations (예약 정보)",
+    "customers (고객 정보)",
+    "settings (시스템 설정)"
+  ],
+  "api_endpoints": {
+    "public": [
+      "GET /api/settings - 공개 설정 조회",
+      "POST /api/reservations - 새 예약 생성",
+      "GET /api/reservations-search - 예약 검색",
+      "GET /api/checkin?id={id} - 예약 정보 조회",
+      "POST /api/checkin - QR코드 체크인",
+      "POST /api/send-sms - SMS 발송"
+    ],
+    "admin": [
+      "GET/POST /api/admin/settings - 관리자 설정",
+      "GET /api/admin/reservations - 예약 목록 (페이지네이션)",
+      "GET /api/admin/reservations/id - 예약 상세 조회",
+      "DELETE /api/admin/reservations/id - 예약 삭제",
+      "GET /api/admin/sales - 매출 통계"
+    ]
+  },
+  "tech_stack": {
+    "frontend": "Next.js 15 + TypeScript + Tailwind CSS",
+    "backend": "Next.js API Routes (서버리스)",
+    "database": "Supabase PostgreSQL 15.x",
+    "realtime": "Supabase Realtime",
+    "storage": "Supabase Storage",
+    "auth": "Supabase Auth (계획)",
+    "sms": "Cool SMS (solapi)",
+    "hosting": "Vercel",
+    "cdn": "Vercel Edge Network"
+  },
+  "deployment": {
+    "platform": "vercel",
+    "url": "https://adventure-park-system.vercel.app",
+    "environment": "production",
+    "database_provider": "supabase",
+    "database_region": "ap-northeast-1",
+    "auto_deploy": true
+  },
+  "performance": {
+    "database_connections": "Connection pooling (Supabase)",
+    "caching": "Vercel Edge Caching",
+    "optimization": "Next.js 15 App Router",
+    "monitoring": "Vercel Analytics + Supabase Dashboard"
+  },
+  "security": {
+    "database": "Row Level Security (RLS)",
+    "api_auth": "Service Role Key",
+    "https": "강제 적용",
+    "input_validation": "클라이언트/서버 이중 검증",
+    "environment_variables": ".env.local (민감정보 보호)"
+  }
+}
