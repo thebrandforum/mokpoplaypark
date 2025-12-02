@@ -103,7 +103,7 @@ export default function EditPopupPage() {
       formData.append('image', file)
       formData.append('type', 'popup')
 
-      const response = await fetch('/api/admin/upload-image', {
+      const response = await fetch('/api/client/upload-image', {
         method: 'POST',
         body: formData
       })

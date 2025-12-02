@@ -103,7 +103,7 @@ export default function ClientCreatePopupPage() {
       if (error) throw error
 
       alert('팝업이 성공적으로 생성되었습니다!')
-      router.push('/admin/popups')
+      router.push('/client/popups')
 
     } catch (error) {
       console.error('팝업 생성 실패:', error)
@@ -322,7 +322,7 @@ export default function ClientCreatePopupPage() {
           <div className="flex justify-end gap-3">
             <button
               type="button"
-              onClick={() => router.push('/admin/popups')}
+              onClick={() => router.push('/client/popups')}
               className="px-6 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
             >
               취소
