@@ -429,7 +429,7 @@ export default function ClientCommunityPage() {
                           <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-orange-500 transition-colors">
                             <PhotoIcon className="w-8 h-8 mx-auto text-gray-400 mb-2" />
                             <p className="text-xs text-gray-600">클릭하여 이미지 업로드</p>
-                            <p className="text-xs text-gray-500 mt-1">최대 10MB</p>
+                            <p className="text-xs text-gray-500 mt-1">최대 5MB</p>
                           </div>
                           <input
                             type="file"
