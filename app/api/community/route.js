@@ -26,7 +26,7 @@ export async function GET(request) {
       
       const { data: notices, error: noticesError } = await supabase
         .from('notices')
-        .select('id, title, content, author, important, created_at')
+        .select('id, title, content, author, important, created_at, image_url')  // image_url 추가
         .order('important', { ascending: false })  // 중요 공지 먼저
         .order('created_at', { ascending: false }) // 최신순
         .range(startIndex, startIndex + limit - 1)

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import ClientLayout from '@/components/client/client-layout'
-import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, PencilIcon, TrashIcon, PhotoIcon } from '@heroicons/react/24/outline'
 
 interface Notice {
   id: number
@@ -11,6 +11,7 @@ interface Notice {
   author: string
   date: string
   important: boolean
+  image_url?: string  // 이미지 URL 추가
 }
 
 interface FAQ {
@@ -34,6 +35,7 @@ export default function ClientCommunityPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [editingItem, setEditingItem] = useState<any>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)  // 이미지 업로드 상태 추가
 
   // 데이터 상태
   const [notices, setNotices] = useState<Notice[]>([])
@@ -67,6 +69,49 @@ export default function ClientCommunityPage() {
       alert('데이터를 불러오는데 실패했습니다.')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  // 이미지 업로드 처리 함수 추가
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert('이미지 크기는 10MB 이하여야 합니다.')
+      return
+    }
+
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.')
+      return
+    }
+
+    try {
+      setUploadingImage(true)
+
+      const uploadFormData = new FormData()
+      uploadFormData.append('image', file)
+      uploadFormData.append('type', 'notice')
+
+      const response = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        body: uploadFormData
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setFormData((prev: any) => ({ ...prev, image_url: result.imageUrl }))
+        alert('이미지가 업로드되었습니다.')
+      } else {
+        alert(result.message || '이미지 업로드에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error)
+      alert('이미지 업로드 중 오류가 발생했습니다.')
+    } finally {
+      setUploadingImage(false)
     }
   }
 
@@ -359,6 +404,51 @@ export default function ClientCommunityPage() {
                         placeholder="공지사항 내용을 입력하세요"
                       />
                     </div>
+                    
+                    {/* 이미지 업로드 섹션 추가 */}
+                    <div>
+                      <label className="block text-xs sm:text-sm md:text-base lg:text-sm xl:text-base font-medium mb-1 sm:mb-2">이미지 (선택)</label>
+                      
+                      {formData.image_url ? (
+                        <div className="relative">
+                          <img
+                            src={formData.image_url}
+                            alt="공지사항 이미지"
+                            className="w-full max-h-48 object-contain border rounded-md"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setFormData({...formData, image_url: ''})}
+                            className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs rounded hover:bg-red-600"
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="block cursor-pointer">
+                          <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-orange-500 transition-colors">
+                            <PhotoIcon className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                            <p className="text-xs text-gray-600">클릭하여 이미지 업로드</p>
+                            <p className="text-xs text-gray-500 mt-1">최대 10MB</p>
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            disabled={uploadingImage}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+
+                      {uploadingImage && (
+                        <div className="text-center mt-2">
+                          <div className="inline-block w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                          <p className="text-xs text-gray-600 mt-1">업로드 중...</p>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="flex items-center">
                       <input
                         type="checkbox"
@@ -475,12 +565,16 @@ export default function ClientCommunityPage() {
                 <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mt-4 sm:mt-6">
                   <button
                     onClick={handleSave}
-                    className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-orange-600 text-white rounded-md hover:bg-orange-700 text-sm sm:text-base transition-colors"
+                    disabled={isLoading || uploadingImage}
+                    className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-orange-600 text-white rounded-md hover:bg-orange-700 text-sm sm:text-base transition-colors disabled:bg-gray-400"
                   >
-                    저장
+                    {isLoading ? '저장 중...' : '저장'}
                   </button>
                   <button
-                    onClick={() => setShowForm(false)}
+                    onClick={() => {
+                      setShowForm(false)
+                      setFormData({})
+                    }}
                     className="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm sm:text-base transition-colors"
                   >
                     취소
@@ -508,7 +602,7 @@ export default function ClientCommunityPage() {
                 <div key={notice.id} className={`px-3 sm:px-4 md:px-6 lg:px-4 xl:px-6 py-3 sm:py-4 md:py-5 lg:py-4 xl:py-5 ${
                   notice.important ? 'bg-yellow-50 border-l-4 border-yellow-400' : ''
                 }`}>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-3 sm:space-y-0">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
                         {notice.important && (
@@ -519,7 +613,17 @@ export default function ClientCommunityPage() {
                         </h4>
                       </div>
                       <p className="text-xs sm:text-sm md:text-base lg:text-sm xl:text-base text-gray-600 mb-1 break-words">{notice.content}</p>
-                      <p className="text-xs text-gray-500">{notice.date} | {notice.author}</p>
+                      
+                      {/* 이미지 표시 추가 */}
+                      {notice.image_url && (
+                        <img 
+                          src={notice.image_url} 
+                          alt={notice.title}
+                          className="mt-2 max-w-xs w-full rounded border"
+                        />
+                      )}
+                      
+                      <p className="text-xs text-gray-500 mt-2">{notice.date} | {notice.author}</p>
                     </div>
                     
                     <div className="flex flex-wrap items-center gap-2 sm:ml-4">

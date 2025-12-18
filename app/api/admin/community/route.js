@@ -163,7 +163,8 @@ export async function POST(request) {
           title: data.title,
           content: data.content,
           author: data.author || '관리자',
-          important: data.important || false
+          important: data.important || false,
+          image_url: data.image_url || null  // 이미지 URL 추가
         }])
         .select()
 
@@ -235,6 +236,7 @@ export async function PUT(request) {
           title: data.title,
           content: data.content,
           important: data.important,
+          image_url: data.image_url || null,  // 이미지 URL 추가
           updated_at: new Date().toISOString()
         })
         .eq('id', id)

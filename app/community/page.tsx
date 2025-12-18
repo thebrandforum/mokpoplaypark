@@ -14,6 +14,7 @@ interface Notice {
   date: string
   important: boolean
   displayNumber?: number | null
+  image_url?: string  // 이미지 URL 추가
 }
 
 // 샘플 공지사항 데이터 - API 연동시 제거됨
@@ -25,7 +26,7 @@ export default function CommunityPage() {
   const [selectedNotice, setSelectedNotice] = useState<Notice | null>(null)
   const [notices, setNotices] = useState<Notice[]>([])
   const [totalPages, setTotalPages] = useState(1)
-  const [totalNotices, setTotalNotices] = useState(0)  // 추가
+  const [totalNotices, setTotalNotices] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
@@ -50,7 +51,7 @@ export default function CommunityPage() {
 
       if (result.success) {
         setNotices(result.data.notices || [])
-        setTotalNotices(result.data.noticesTotal || 0)  // 추가
+        setTotalNotices(result.data.noticesTotal || 0)
         setTotalPages(Math.ceil(result.data.noticesTotal / noticesPerPage))
       } else {
         console.error('공지사항 로드 실패:', result.message)
@@ -170,6 +171,18 @@ export default function CommunityPage() {
                     </div>
                   </div>
                 </div>
+                
+                {/* 이미지 표시 - 높이 고정 */}
+                {selectedNotice.image_url && (
+                  <div className="mb-6">
+                    <img 
+                      src={selectedNotice.image_url} 
+                      alt={selectedNotice.title}
+                      className="max-h-64 sm:max-h-80 md:max-h-96 w-auto mx-auto rounded-lg border"
+                    />
+                  </div>
+                )}
+                
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line text-sm sm:text-base">
                   {selectedNotice.content}
                 </div>
