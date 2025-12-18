@@ -3,10 +3,5 @@
     "app/api/admin/upload-image/route.js": {
       "maxDuration": 60
     }
-  },
-  "api": {
-    "bodyParser": {
-      "sizeLimit": "10mb"
-    }
   }
 }
