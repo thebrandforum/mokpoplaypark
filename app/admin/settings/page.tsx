@@ -74,7 +74,8 @@ export default function SettingsPage() {
     adultNote: '만13세 이상',
     guardianNote: '놀이시설 이용불가',
     remark1Hour: '20:00 발권마감',
-    remark2Hour: '19:00 발권마감'
+    remark2Hour: '19:00 발권마감',
+    priceImage:''
   })
 
   // 운영 설정 - 실제 목포 플레이파크 운영시간
@@ -388,6 +389,55 @@ export default function SettingsPage() {
         alert(result.message || '이미지 업로드에 실패했습니다.')
       }
 
+    } catch (error) {
+      console.error('이미지 업로드 실패:', error)
+      alert('이미지 업로드 중 오류가 발생했습니다.')
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  // 요금표 이미지 업로드 처리
+  const handlePriceImageUpload = async (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+  
+    // 파일 크기 체크 (10MB 제한)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('이미지 크기는 10MB 이하여야 합니다.')
+      return
+    }
+  
+    // 파일 타입 체크
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.')
+      return
+    }
+  
+    try {
+      setUploadingImage(true)
+  
+      const formData = new FormData()
+      formData.append('image', file)
+      formData.append('type', 'price')
+  
+      const response = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        body: formData
+      })
+  
+      const result = await response.json()
+  
+      if (result.success) {
+        setPriceSettings({
+          ...priceSettings,
+          priceImage: result.imageUrl
+        })
+        alert('요금표 이미지가 업로드되었습니다!')
+      } else {
+        alert(result.message || '이미지 업로드에 실패했습니다.')
+      }
+  
     } catch (error) {
       console.error('이미지 업로드 실패:', error)
       alert('이미지 업로드 중 오류가 발생했습니다.')
@@ -968,6 +1018,16 @@ export default function SettingsPage() {
                 </p>
               </div>
 
+              <div className="flex justify-end">
+                <button
+                  onClick={() => handleSave('price_settings')}
+                  disabled={isLoading || uploadingImage}
+                  className="px-3 sm:px-4 md:px-6 lg:px-4 xl:px-6 py-1.5 sm:py-2 md:py-2.5 lg:py-2 xl:py-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 disabled:opacity-50 text-xs sm:text-sm md:text-base lg:text-sm xl:text-base transition-colors"
+                >
+                  {isLoading ? '저장 중...' : '저장'}
+                </button>
+              </div>
+
               {/* 적용될 페이지 안내 */}
               <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h5 className="text-xs sm:text-sm font-medium text-blue-800 mb-2">적용될 페이지</h5>
@@ -1435,10 +1495,10 @@ export default function SettingsPage() {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
                 <div>
                   <h3 className="text-base sm:text-lg md:text-xl lg:text-lg xl:text-xl font-semibold text-gray-900">
-                    요금 설정
+                    요금표 설정
                   </h3>
                   <p className="text-xs sm:text-sm md:text-base lg:text-sm xl:text-base text-gray-600">
-                    입장권 요금을 설정합니다
+                    메인 페이지와 요금안내 페이지에 표시될 요금표 이미지를 관리합니다
                   </p>
                 </div>
                 {savedSection === 'price_settings' && (
@@ -1448,355 +1508,59 @@ export default function SettingsPage() {
             </div>
 
             <div className="p-3 sm:p-4 md:p-6 lg:p-4 xl:p-6">
-              {/* 모바일 카드형 레이아웃 */}
-              <div className="block lg:hidden space-y-4">
-                {/* 1시간 카드 */}
-                <div className="border border-gray-300 rounded-lg p-4">
-                  <h4 className="font-medium text-center mb-4 text-lg">1시간 이용권</h4>
-                  
+              {/* 요금표 이미지 업로드 */}
+              <div className="mb-6">
+                {priceSettings.priceImage ? (
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">어린이</span>
-                      <div className="flex items-center space-x-2">
+                    <img 
+                      src={priceSettings.priceImage} 
+                      alt="요금표" 
+                      className="w-full max-w-md rounded border"
+                    />
+                    <div className="flex gap-2">
+                      <label className="cursor-pointer inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700">
+                        이미지 변경
                         <input
-                          type="number"
-                          value={priceSettings.child1Hour}
-                          onChange={(e) => setPriceSettings({...priceSettings, child1Hour: parseInt(e.target.value)})}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-center text-sm font-bold"
+                          type="file"
+                          accept="image/*"
+                          onChange={handlePriceImageUpload}
+                          disabled={uploadingImage}
+                          className="hidden"
                         />
-                        <span className="text-sm">원</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">청소년/성인</span>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="number"
-                          value={priceSettings.adult1Hour}
-                          onChange={(e) => setPriceSettings({...priceSettings, adult1Hour: parseInt(e.target.value)})}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-center text-sm font-bold"
-                        />
-                        <span className="text-sm">원</span>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">보호자</span>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="number"
-                          value={priceSettings.guardian1Hour}
-                          onChange={(e) => setPriceSettings({...priceSettings, guardian1Hour: parseInt(e.target.value)})}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-center text-sm font-bold"
-                        />
-                        <span className="text-sm">원</span>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">비고</label>
-                      <input
-                        type="text"
-                        value={priceSettings.remark1Hour}
-                        onChange={(e) => setPriceSettings({...priceSettings, remark1Hour: e.target.value})}
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-center text-sm"
-                        placeholder="1시간 비고 입력"
-                      />
+                      </label>
+                      <button
+                        onClick={() => setPriceSettings({...priceSettings, priceImage: ''})}
+                        className="px-3 py-1.5 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                      >
+                        삭제
+                      </button>
                     </div>
                   </div>
-                </div>
-
-                {/* 2시간 카드 */}
-                <div className="border border-gray-300 rounded-lg p-4">
-                  <h4 className="font-medium text-center mb-4 text-lg">2시간 이용권</h4>
-                  
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">어린이</span>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="number"
-                          value={priceSettings.child2Hour}
-                          onChange={(e) => setPriceSettings({...priceSettings, child2Hour: parseInt(e.target.value)})}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-center text-sm font-bold"
-                        />
-                        <span className="text-sm">원</span>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">청소년/성인</span>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="number"
-                          value={priceSettings.adult2Hour}
-                          onChange={(e) => setPriceSettings({...priceSettings, adult2Hour: parseInt(e.target.value)})}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-center text-sm font-bold"
-                        />
-                        <span className="text-sm">원</span>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">보호자</span>
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="number"
-                          value={priceSettings.guardian2Hour}
-                          onChange={(e) => setPriceSettings({...priceSettings, guardian2Hour: parseInt(e.target.value)})}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-center text-sm font-bold"
-                        />
-                        <span className="text-sm">원</span>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">비고</label>
-                      <input
-                        type="text"
-                        value={priceSettings.remark2Hour}
-                        onChange={(e) => setPriceSettings({...priceSettings, remark2Hour: e.target.value})}
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-center text-sm"
-                        placeholder="2시간 비고 입력"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 연령대 설정 */}
-                <div className="border border-gray-300 rounded-lg p-4">
-                  <h4 className="font-medium text-center mb-4 text-lg">연령대 설정</h4>
-                  
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">어린이 연령대</label>
-                      <input
-                        type="text"
-                        value={priceSettings.childNote}
-                        onChange={(e) => setPriceSettings({...priceSettings, childNote: e.target.value})}
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-center text-sm"
-                        placeholder="어린이 연령대"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">청소년/성인 연령대</label>
-                      <input
-                        type="text"
-                        value={priceSettings.adultNote}
-                        onChange={(e) => setPriceSettings({...priceSettings, adultNote: e.target.value})}
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-center text-sm"
-                        placeholder="청소년/성인 연령대"
-                      />
-                    </div>
-                    
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">보호자 안내</label>
-                      <input
-                        type="text"
-                        value={priceSettings.guardianNote}
-                        onChange={(e) => setPriceSettings({...priceSettings, guardianNote: e.target.value})}
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-center text-sm"
-                        placeholder="보호자 이용제한"
-                      />
-                    </div>
-                  </div>
-                </div>
+                ) : (
+                  <label className="cursor-pointer inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    {uploadingImage ? '업로드 중...' : '요금표 이미지 업로드'}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePriceImageUpload}
+                      disabled={uploadingImage}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+                
+                <p className="text-xs text-gray-500 mt-2">
+                  최대 10MB (PNG, JPG, WebP)
+                </p>
               </div>
 
-              {/* 데스크톱 테이블 레이아웃 */}
-              <div className="hidden lg:block overflow-x-auto">
-                <div className="border border-gray-300 rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gray-50 border-b border-gray-300">
-                        <th rowSpan={2} className="border-r border-gray-300 p-4 text-center font-medium">종류</th>
-                        <th rowSpan={2} className="border-r border-gray-300 p-4 text-center font-medium">이용시간</th>
-                        <th colSpan={3} className="border-b border-gray-300 p-2 text-center font-medium">이용요금</th>
-                        <th rowSpan={2} className="border-l border-gray-300 p-4 text-center font-medium">비고</th>
-                      </tr>
-                      <tr className="bg-gray-50 border-b border-gray-300">
-                        <th className="border-r border-gray-300 p-2 text-center text-sm">
-                          어린이<br />
-                          <input
-                            type="text"
-                            value={priceSettings.childNote}
-                            onChange={(e) => setPriceSettings({...priceSettings, childNote: e.target.value})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center text-xs mt-1 bg-white"
-                            placeholder="연령대"
-                          />
-                        </th>
-                        <th className="border-r border-gray-300 p-2 text-center text-sm">
-                          청소년 및 성인<br />
-                          <input
-                            type="text"
-                            value={priceSettings.adultNote}
-                            onChange={(e) => setPriceSettings({...priceSettings, adultNote: e.target.value})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center text-xs mt-1 bg-white"
-                            placeholder="연령대"
-                          />
-                        </th>
-                        <th className="p-2 text-center text-sm">
-                          보호자<br />
-                          <input
-                            type="text"
-                            value={priceSettings.guardianNote}
-                            onChange={(e) => setPriceSettings({...priceSettings, guardianNote: e.target.value})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center text-xs mt-1 bg-white"
-                            placeholder="이용제한"
-                          />
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-gray-300">
-                        <td rowSpan={2} className="border-r border-gray-300 p-4 text-center font-medium">일반<br />요금</td>
-                        <td className="border-r border-gray-300 p-4 text-center">1시간</td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.child1Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, child1Hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.adult1Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, adult1Hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.guardian1Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, guardian1Hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="p-4 text-center">
-                          <input
-                            type="text"
-                            value={priceSettings.remark1Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, remark1Hour: e.target.value})}
-                            className="w-full px-3 py-2 border border-gray-300 rounded text-center text-sm bg-white"
-                            placeholder="1시간 비고 입력"
-                          />
-                        </td>
-                      </tr>
-                      <tr className="border-b border-gray-300">
-                        <td className="border-r border-gray-300 p-4 text-center">2시간</td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.child2Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, child2Hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.adult2Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, adult2Hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.guardian2Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, guardian2Hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="p-4 text-center">
-                          <input
-                            type="text"
-                            value={priceSettings.remark2Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, remark2Hour: e.target.value})}
-                            className="w-full px-3 py-2 border border-gray-300 rounded text-center text-sm bg-white"
-                            placeholder="2시간 비고 입력"
-                          />
-                        </td>
-                      </tr>
-                      
-                      {/* 감면 요금 추가 */}
-                      <tr className="border-b border-gray-300">
-                        <td rowSpan={2} className="border-r border-gray-300 p-4 text-center font-medium bg-orange-50">감면<br />요금</td>
-                        <td className="border-r border-gray-300 p-4 text-center">1시간</td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.discount_child_1hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, discount_child_1hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.discount_adult_1hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, discount_adult_1hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.guardian1Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, guardian1Hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                            disabled
-                          />
-                        </td>
-                        <td className="p-4 text-center">
-                          <span className="text-sm text-gray-500">일반과 동일</span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border-r border-gray-300 p-4 text-center">2시간</td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.discount_child_2hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, discount_child_2hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.discount_adult_2hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, discount_adult_2hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                          />
-                        </td>
-                        <td className="border-r border-gray-300 p-4 text-center">
-                          <input
-                            type="number"
-                            value={priceSettings.guardian2Hour}
-                            onChange={(e) => setPriceSettings({...priceSettings, guardian2Hour: parseInt(e.target.value)})}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-center font-bold"
-                            disabled
-                          />
-                        </td>
-                        <td className="p-4 text-center">
-                          <span className="text-sm text-gray-500">일반과 동일</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              
-              <div className="flex justify-end mt-4 sm:mt-6">
+              <div className="flex justify-end">
                 <button
                   onClick={() => handleSave('price_settings')}
-                  disabled={isLoading}
+                  disabled={isLoading || uploadingImage}
                   className="px-3 sm:px-4 md:px-6 lg:px-4 xl:px-6 py-1.5 sm:py-2 md:py-2.5 lg:py-2 xl:py-2.5 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 disabled:opacity-50 text-xs sm:text-sm md:text-base lg:text-sm xl:text-base transition-colors"
                 >
                   {isLoading ? '저장 중...' : '저장'}

@@ -268,16 +268,18 @@ function validateSectionData(section, data) {
 
 // 요금 설정 검증
 function validatePriceSettings(data) {
-  const requiredFields = ['child1Hour', 'child2Hour', 'adult1Hour', 'adult2Hour', 'guardian1Hour', 'guardian2Hour']
-  
-  for (const field of requiredFields) {
-    if (typeof data[field] !== 'number' || data[field] < 0) {
-      return { valid: false, message: `${field}는 0 이상의 숫자여야 합니다.` }
-    }
+  // priceImage 검증 (있으면)
+  if (data.priceImage !== undefined && typeof data.priceImage !== 'string') {
+    return { valid: false, message: 'priceImage는 문자열이어야 합니다.' }
   }
   
-  if (data.child1Hour > 1000000 || data.adult1Hour > 1000000) {
-    return { valid: false, message: '요금은 100만원을 초과할 수 없습니다.' }
+  // 숫자 필드 검증 (있으면)
+  const numericFields = ['child1Hour', 'child2Hour', 'adult1Hour', 'adult2Hour', 'guardian1Hour', 'guardian2Hour']
+  
+  for (const field of numericFields) {
+    if (data[field] !== undefined && (typeof data[field] !== 'number' || data[field] < 0)) {
+      return { valid: false, message: `${field}는 0 이상의 숫자여야 합니다.` }
+    }
   }
   
   return { valid: true }

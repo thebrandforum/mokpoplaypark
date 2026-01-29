@@ -121,15 +121,14 @@ export default function PopupDisplay() {
         zIndex: zIndex
       }
     } else {
-      // PC: 가로로 겹치기 (팝업 너비의 20%만 보이게)
-      // 640px 너비 기준 20% = 128px
+      // PC: 화면 중앙 기준으로 가로로 겹치기
       // 첫 번째 팝업 기준으로 뒤로 갈수록 오른쪽으로 이동
       const offset = index * 128
       
       return {
-        left: `${offset}px`,
+        left: '50%',
         top: '45%',
-        transform: `translateY(-50%)`,
+        transform: `translate(calc(-50% + ${offset}px), -50%)`,
         zIndex: zIndex
       }
     }

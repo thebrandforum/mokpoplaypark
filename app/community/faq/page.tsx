@@ -20,7 +20,7 @@ export default function FAQPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
 
-  const faqsPerPage = 3
+  const faqsPerPage = 5
 
   useEffect(() => {
     setIsClient(true)

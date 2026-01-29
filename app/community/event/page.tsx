@@ -14,6 +14,7 @@ interface Event {
   startDate: string
   endDate: string
   status: 'ongoing' | 'upcoming' | 'ended'
+  image_url?: string
 }
 
 export default function EventPage() {
@@ -189,17 +190,23 @@ export default function EventPage() {
                 </div>
               </div>
               
+              {/* 이벤트 이미지 - 이미지가 있으면 표시, 없으면 플레이스홀더 */}
               <div className="mb-6 sm:mb-8">
-                <div className="w-full h-48 sm:h-64 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
-                  <TagIcon className="w-16 h-16 sm:w-24 sm:h-24" />
-                </div>
+                {selectedEvent.image_url ? (
+                  <img 
+                    src={selectedEvent.image_url} 
+                    alt={selectedEvent.title}
+                    className="w-full h-auto rounded-lg"
+                  />
+                ) : (
+                  <div className="w-full h-48 sm:h-64 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                    <TagIcon className="w-16 h-16 sm:w-24 sm:h-24" />
+                  </div>
+                )}
               </div>
               
-              <div className="text-gray-700 text-sm sm:text-base lg:text-lg leading-relaxed">
+              <div className="text-gray-700 text-sm sm:text-base lg:text-lg leading-relaxed whitespace-pre-line">
                 {selectedEvent.description}
-                <br /><br />
-                자세한 이벤트 내용과 참여 방법은 현장에서 안내드립니다. 
-                많은 참여 부탁드립니다!
               </div>
             </div>
           </div>
@@ -215,19 +222,27 @@ export default function EventPage() {
                 >
                   {/* 이벤트 이미지 - 모바일 반응형 */}
                   <div className="relative h-40 sm:h-48 bg-gray-200">
-                    <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 text-white">
-                      <div className={`inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-medium mb-2 ${
-                        event.status === 'ongoing' ? 'bg-green-500' : 
-                        event.status === 'upcoming' ? 'bg-blue-500' : 'bg-gray-500'
+                    <div className="absolute top-3 sm:top-4 left-3 sm:left-4 z-10">
+                      <div className={`inline-block px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
+                        event.status === 'ongoing' ? 'bg-green-500 text-white' : 
+                        event.status === 'upcoming' ? 'bg-blue-500 text-white' : 'bg-gray-500 text-white'
                       }`}>
                         {event.status === 'ongoing' ? '진행중' : 
                          event.status === 'upcoming' ? '예정' : '종료'}
                       </div>
                     </div>
-                    {/* 실제 이미지가 없으므로 플레이스홀더 */}
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <TagIcon className="w-12 h-12 sm:w-16 sm:h-16" />
-                    </div>
+                    {/* 이미지가 있으면 표시, 없으면 플레이스홀더 */}
+                    {event.image_url ? (
+                      <img 
+                        src={event.image_url} 
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <TagIcon className="w-12 h-12 sm:w-16 sm:h-16" />
+                      </div>
+                    )}
                   </div>
 
                   {/* 이벤트 정보 - 모바일 반응형 */}

@@ -192,7 +192,8 @@ export async function POST(request) {
           description: data.description,
           start_date: data.startDate,
           end_date: data.endDate,
-          status: data.status || 'upcoming'
+          status: data.status || 'upcoming',
+          image_url: data.image_url || null
         }])
         .select()
 
@@ -269,6 +270,7 @@ export async function PUT(request) {
           start_date: data.startDate,
           end_date: data.endDate,
           status: data.status,
+          image_url: data.image_url || null,
           updated_at: new Date().toISOString()
         })
         .eq('id', id)

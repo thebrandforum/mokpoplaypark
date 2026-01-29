@@ -182,18 +182,6 @@ export default function FacilityPage() {
             <p className="text-gray-500 text-base sm:text-lg">등록된 시설이 없습니다.</p>
           </div>
         )}
-
-        {/* 이용권 구매 버튼 - 페이지 맨 아래 추가 */}
-        <div className="mt-12 sm:mt-16 lg:mt-20 text-center">
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-            <a href="/reservation" className="inline-block bg-orange-500 text-white py-3 px-8 rounded-lg font-semibold hover:bg-orange-600 transition text-base sm:text-lg">
-              이용권 구매
-            </a>
-            <a href="/usage" className="inline-block bg-blue-500 text-white py-3 px-8 rounded-lg font-semibold hover:bg-blue-600 transition text-base sm:text-lg">
-              이용안내
-            </a>
-          </div>
-        </div>
       </section>
     </BaseLayout>
   )

@@ -334,104 +334,17 @@ export default function BaseLayout({ children }: BaseLayoutProps) {
               ))}
             </div>
 
-            {/* 로그인/회원가입/예약 버튼 - 4단계 반응형 */}
-            <div className="hidden md:flex items-center space-x-1.5 sm:space-x-2 md:space-x-3 lg:space-x-2 xl:space-x-4">
-              {isLoggedIn ? (
-                <>
-                  <div className="flex items-center">
-                    <div className="relative group">
-                      <button className="flex items-center space-x-1.5 sm:space-x-2 text-gray-700 hover:text-orange-500 transition">
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-6 lg:h-6 xl:w-8 xl:h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white text-xs sm:text-sm md:text-base lg:text-sm xl:text-base font-bold">
-                          {userInfo?.name?.charAt(0)}
-                        </div>
-                        <span className="font-medium text-xs sm:text-sm md:text-base lg:text-sm xl:text-base truncate max-w-[60px] sm:max-w-[80px] md:max-w-[100px] lg:max-w-[80px] xl:max-w-[120px]">
-                          {userInfo?.name}님
-                        </span>
-                      </button>
-
-                      {/* 드롭다운 메뉴 */}
-                      <div className="absolute right-0 mt-2 w-40 sm:w-44 md:w-48 lg:w-44 xl:w-52 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
-                        <div className="py-2">
-                          <a
-                            href="/account/password"
-                            className="flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm md:text-base lg:text-sm xl:text-base text-gray-700 hover:bg-orange-50 transition"
-                          >
-                            <KeyIcon
-                              className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 mr-2 text-orange-500"
-                              style={{ color: "#F7921C" }}
-                            />
-                            비밀번호 변경
-                          </a>
-                          <a
-                            href="/reservation-check"
-                            className="flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm md:text-base lg:text-sm xl:text-base text-gray-700 hover:bg-orange-50 transition"
-                          >
-                            <TicketIcon
-                              className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-4 lg:h-4 xl:w-5 xl:h-5 mr-2 text-orange-500"
-                              style={{ color: "#F7921C" }}
-                            />
-                            내 예약 확인
-                          </a>
-                          <hr className="my-2 border-gray-100" />
-                          <button
-                            onClick={handleLogout}
-                            className="w-full flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm md:text-base lg:text-sm xl:text-base text-gray-700 hover:bg-gray-50 transition text-left"
-                          >
-                            로그아웃
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </>
+            {/* 모바일용 메뉴 버튼 */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 transition"
+            >
+              {mobileMenuOpen ? (
+                <XMarkIcon className="w-5 h-5 text-gray-700" />
               ) : (
-                <>
-                  <a
-                    href="/login"
-                    className="text-gray-700 hover:text-orange-500 font-medium text-xs sm:text-sm md:text-base lg:text-sm xl:text-base transition"
-                  >
-                    로그인
-                  </a>
-                  <a
-                    href="/signup"
-                    className="text-gray-700 hover:text-orange-500 font-medium text-xs sm:text-sm md:text-base lg:text-sm xl:text-base transition"
-                  >
-                    회원가입
-                  </a>
-                </>
+                <Bars3Icon className="w-5 h-5 text-gray-700" />
               )}
-
-              <a
-                href="/reservation-check"
-                className="border-2 border-gray-300 text-gray-700 px-2 sm:px-3 md:px-4 lg:px-3 xl:px-5 py-1.5 sm:py-2 md:py-2.5 lg:py-2 xl:py-2.5 rounded-full hover:border-orange-500 hover:text-orange-500 transition-all font-medium text-xs sm:text-sm md:text-base lg:text-sm xl:text-base"
-              >
-                예약 확인
-              </a>
-            </div>
-
-            {/* 모바일용 버튼들 - md 미만에서만 표시 */}
-            <div className="flex md:hidden items-center space-x-1.5">
-              {/* 예약 확인 버튼 */}
-              <a
-                href="/reservation-check"
-                className="border border-gray-300 text-gray-700 px-2.5 py-1.5 rounded-full text-xs font-medium hover:border-orange-500             hover:text-orange-500 transition-all flex flex-col items-center leading-tight"
-              >
-                <span>예약</span>
-                <span>확인</span>
-              </a>
-
-              {/* 메뉴 버튼 */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden p-1.5 sm:p-2 rounded-lg hover:bg-gray-100 transition"
-              >
-                {mobileMenuOpen ? (
-                  <XMarkIcon className="w-5 h-5 text-gray-700" />
-                ) : (
-                  <Bars3Icon className="w-5 h-5 text-gray-700" />
-                )}
-              </button>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -478,56 +391,6 @@ export default function BaseLayout({ children }: BaseLayoutProps) {
                   </div>
                 </div>
               ))}
-            </div>
-
-            {/* 구분선 */}
-            <div className="my-3">
-              <div className="border-t border-gray-200"></div>
-            </div>
-
-            {/* 로그인/회원가입 메뉴 */}
-            <div className="space-y-1">
-              {isLoggedIn ? (
-                <>
-                  <a
-                    href="/account/password"
-                    className="block text-gray-700 hover:text-orange-500 font-medium transition text-sm sm:text-base md:text-lg py-2.5"
-                  >
-                    비밀번호 변경
-                  </a>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left text-gray-700 hover:text-orange-500 font-medium transition text-sm sm:text-base md:text-lg py-2.5"
-                  >
-                    로그아웃
-                  </button>
-                </>
-              ) : (
-                <>
-                  <a
-                    href="/login"
-                    className="block text-gray-700 hover:text-orange-500 font-medium transition text-sm sm:text-base md:text-lg py-2.5"
-                  >
-                    로그인
-                  </a>
-                  <a
-                    href="/signup"
-                    className="block text-gray-700 hover:text-orange-500 font-medium transition text-sm sm:text-base md:text-lg py-2.5"
-                  >
-                    회원가입
-                  </a>
-                </>
-              )}
-            </div>
-
-            {/* 예약 확인 버튼 */}
-            <div className="mt-4 space-y-2 sm:space-y-3">
-              <a
-                href="/reservation-check"
-                className="block w-full border-2 border-gray-300 text-gray-700 text-center py-2.5 sm:py-3 md:py-3.5 rounded-full font-medium hover:border-orange-500 hover:text-orange-500 transition text-sm sm:text-base md:text-lg"
-              >
-                예약 확인
-              </a>
             </div>
           </div>
         </div>
@@ -593,8 +456,8 @@ export default function BaseLayout({ children }: BaseLayoutProps) {
 
           {/* 저작권 */}
           <div className="border-t border-gray-200 mt-3 sm:mt-4 md:mt-5 lg:mt-5 xl:mt-6 pt-3 sm:pt-3 md:pt-4 lg:pt-4 xl:pt-5 text-center">
-            <p className="text-gray-500 text-[11px] sm:text-xs md:text-sm lg:text-[13px] xl:text-sm">
-              © 2025 목포플레이파크. All rights reserved.
+            <p className="text-black text-[11px] sm:text-xs md:text-sm lg:text-[13px] xl:text-sm">
+              © <span className="font-bold">Brand by BRAND FORUM</span>
             </p>
           </div>
         </div>

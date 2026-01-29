@@ -177,7 +177,6 @@ export default function UsagePage() {
                             <thead>
                               <tr className="border-b-2 border-gray-200">
                                 <th className="text-left py-4 font-bold text-gray-800">운영시간</th>
-                                <th className="text-left py-4 font-bold text-gray-800">입장마감시간</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -192,15 +191,11 @@ export default function UsagePage() {
                                     </span>
                                   </div>
                                 </td>
-                                <td className="py-4">
-                                  <span className="bg-orange-100 text-orange-800 px-3 py-2 rounded-full font-bold">
-                                    {getLastEntryTime(operationSettings?.closeTime)}
-                                  </span>
-                                </td>
                               </tr>
                             </tbody>
                           </table>
                         </div>
+
 
                         {/* 모바일 카드 형태 */}
                         <div className="lg:hidden space-y-4">
@@ -214,13 +209,6 @@ export default function UsagePage() {
                                 {operationSettings?.openTime || '10:00'} ~ {operationSettings?.closeTime || '21:00'}
                               </span>
                             </div>
-                          </div>
-                          
-                          <div className="border border-gray-200 rounded-lg p-4">
-                            <h4 className="font-bold text-gray-800 mb-2">입장마감시간</h4>
-                            <span className="bg-orange-100 text-orange-800 px-3 py-2 rounded-full font-bold text-sm">
-                              {getLastEntryTime(operationSettings?.closeTime)}
-                            </span>
                           </div>
                         </div>
 

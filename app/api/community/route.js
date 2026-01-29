@@ -98,7 +98,7 @@ export async function GET(request) {
       
       const { data: events, error: eventsError } = await supabase
         .from('events')
-        .select('id, title, description, start_date, end_date, status, created_at')
+        .select('id, title, description, start_date, end_date, status, created_at, image_url')
         .order('start_date', { ascending: false })
         .range(startIndex, startIndex + limit - 1)
 

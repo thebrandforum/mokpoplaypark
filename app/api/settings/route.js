@@ -130,7 +130,8 @@ function getDefaultSettings() {
       groupDiscount: 10,
       minGroupSize: 20,
       remark1Hour: '20:00 발권마감',
-      remark2Hour: '19:00 발권마감'
+      remark2Hour: '19:00 발권마감',
+      priceImage: ''
     },
     operation_settings: {
       openTime: '10:00',        // 🆕 목포 플레이파크 운영시간

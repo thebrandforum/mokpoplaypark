@@ -11,7 +11,7 @@ interface Notice {
   author: string
   date: string
   important: boolean
-  image_url?: string  // 이미지 URL 추가
+  image_url?: string
 }
 
 interface FAQ {
@@ -28,6 +28,7 @@ interface Event {
   startDate: string
   endDate: string
   status: 'ongoing' | 'upcoming' | 'ended'
+  image_url?: string
 }
 
 export default function AdminCommunityPage() {
@@ -35,7 +36,7 @@ export default function AdminCommunityPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showForm, setShowForm] = useState(false)
   const [editingItem, setEditingItem] = useState<any>(null)
-  const [uploadingImage, setUploadingImage] = useState(false)  // 이미지 업로드 상태 추가
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   // 데이터 상태
   const [notices, setNotices] = useState<Notice[]>([])
@@ -72,7 +73,7 @@ export default function AdminCommunityPage() {
     }
   }
 
-  // 이미지 업로드 처리 함수 추가
+  // 이미지 업로드 처리 함수
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
@@ -92,7 +93,7 @@ export default function AdminCommunityPage() {
 
       const uploadFormData = new FormData()
       uploadFormData.append('image', file)
-      uploadFormData.append('type', 'notice')
+      uploadFormData.append('type', activeTab === 'notices' ? 'notice' : 'event')
 
       const response = await fetch('/api/admin/upload-image', {
         method: 'POST',
@@ -142,7 +143,6 @@ export default function AdminCommunityPage() {
       const result = await response.json()
       
       if (result.success) {
-        // 로컬 상태에서도 제거
         if (activeTab === 'notices') {
           setNotices(prev => prev.filter(item => item.id !== id))
         } else if (activeTab === 'faqs') {
@@ -227,7 +227,6 @@ export default function AdminCommunityPage() {
       const result = await response.json()
 
       if (result.success) {
-        // 로컬 상태 업데이트
         if (activeTab === 'notices') {
           if (editingItem) {
             setNotices(prev => prev.map(item => 
@@ -285,7 +284,7 @@ export default function AdminCommunityPage() {
     }
   }
 
-  // 중요 공지 토글 (공지사항만)
+  // 중요 공지 토글
   const handleToggleImportant = async (notice: Notice) => {
     try {
       const updatedData = { ...notice, important: !notice.important }
@@ -405,7 +404,7 @@ export default function AdminCommunityPage() {
                       />
                     </div>
                     
-                    {/* 이미지 업로드 섹션 추가 */}
+                    {/* 이미지 업로드 섹션 */}
                     <div>
                       <label className="block text-xs sm:text-sm md:text-base lg:text-sm xl:text-base font-medium mb-1 sm:mb-2">이미지 (선택)</label>
                       
@@ -526,6 +525,51 @@ export default function AdminCommunityPage() {
                         placeholder="이벤트 설명을 입력하세요"
                       />
                     </div>
+                    
+                    {/* 이벤트 이미지 업로드 섹션 추가 */}
+                    <div>
+                      <label className="block text-xs sm:text-sm md:text-base lg:text-sm xl:text-base font-medium mb-1 sm:mb-2">이미지 (선택)</label>
+                      
+                      {formData.image_url ? (
+                        <div className="relative">
+                          <img
+                            src={formData.image_url}
+                            alt="이벤트 이미지"
+                            className="w-full max-h-48 object-contain border rounded-md"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setFormData({...formData, image_url: ''})}
+                            className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs rounded hover:bg-red-600"
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="block cursor-pointer">
+                          <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-orange-500 transition-colors">
+                            <PhotoIcon className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                            <p className="text-xs text-gray-600">클릭하여 이미지 업로드</p>
+                            <p className="text-xs text-gray-500 mt-1">최대 5MB</p>
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            disabled={uploadingImage}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+
+                      {uploadingImage && (
+                        <div className="text-center mt-2">
+                          <div className="inline-block w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                          <p className="text-xs text-gray-600 mt-1">업로드 중...</p>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm md:text-base lg:text-sm xl:text-base font-medium mb-1 sm:mb-2">시작일</label>
@@ -585,7 +629,7 @@ export default function AdminCommunityPage() {
           </div>
         )}
 
-        {/* 공지사항 목록 - 반응형 */}
+        {/* 공지사항 목록 */}
         {activeTab === 'notices' && (
           <div className="bg-white rounded-lg shadow">
             <div className="px-3 sm:px-4 md:px-6 lg:px-4 xl:px-6 py-3 sm:py-4 md:py-5 lg:py-4 xl:py-5 border-b">
@@ -614,7 +658,6 @@ export default function AdminCommunityPage() {
                       </div>
                       <p className="text-xs sm:text-sm md:text-base lg:text-sm xl:text-base text-gray-600 mb-1 break-words">{notice.content}</p>
                       
-                      {/* 이미지 표시 추가 */}
                       {notice.image_url && (
                         <img 
                           src={notice.image_url} 
@@ -664,7 +707,7 @@ export default function AdminCommunityPage() {
           </div>
         )}
 
-        {/* FAQ 목록 - 반응형 */}
+        {/* FAQ 목록 */}
         {activeTab === 'faqs' && (
           <div className="bg-white rounded-lg shadow">
             <div className="px-3 sm:px-4 md:px-6 lg:px-4 xl:px-6 py-3 sm:py-4 md:py-5 lg:py-4 xl:py-5 border-b">
@@ -702,7 +745,7 @@ export default function AdminCommunityPage() {
           </div>
         )}
 
-        {/* 이벤트 목록 - 반응형 */}
+        {/* 이벤트 목록 */}
         {activeTab === 'events' && (
           <div className="bg-white rounded-lg shadow">
             <div className="px-3 sm:px-4 md:px-6 lg:px-4 xl:px-6 py-3 sm:py-4 md:py-5 lg:py-4 xl:py-5 border-b">
@@ -724,7 +767,17 @@ export default function AdminCommunityPage() {
                         <h4 className="font-medium text-sm sm:text-base md:text-lg lg:text-base xl:text-lg break-words">{event.title}</h4>
                       </div>
                       <p className="text-xs sm:text-sm md:text-base lg:text-sm xl:text-base text-gray-600 mb-1 break-words">{event.description}</p>
-                      <p className="text-xs text-gray-500">{event.startDate} ~ {event.endDate}</p>
+                      
+                      {/* 이벤트 이미지 표시 추가 */}
+                      {event.image_url && (
+                        <img 
+                          src={event.image_url} 
+                          alt={event.title}
+                          className="mt-2 max-w-xs w-full rounded border"
+                        />
+                      )}
+                      
+                      <p className="text-xs text-gray-500 mt-2">{event.startDate} ~ {event.endDate}</p>
                     </div>
                     <div className="flex gap-1 sm:gap-2 sm:ml-4">
                       <button

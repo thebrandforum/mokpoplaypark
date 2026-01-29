@@ -172,13 +172,13 @@ export default function CommunityPage() {
                   </div>
                 </div>
                 
-                {/* 이미지 표시 - 높이 고정 */}
+                {/* 이미지 표시 - 화면 꽉 차게 */}
                 {selectedNotice.image_url && (
                   <div className="mb-6">
                     <img 
                       src={selectedNotice.image_url} 
                       alt={selectedNotice.title}
-                      className="max-h-64 sm:max-h-80 md:max-h-96 w-auto mx-auto rounded-lg border"
+                      className="w-full h-auto rounded-lg"
                     />
                   </div>
                 )}
