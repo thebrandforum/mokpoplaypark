@@ -26,6 +26,7 @@ export default function EditPopupPage() {
     title: '',
     content: '',
     image_url: '',
+    link_url: '',
     show_title: true,
     show_content: true,
     show_image: true,
@@ -62,6 +63,7 @@ export default function EditPopupPage() {
           title: data.title || '',
           content: data.content || '',
           image_url: data.image_url || '',
+          link_url: data.link_url || '',
           show_title: data.show_title ?? true,
           show_content: data.show_content ?? true,
           show_image: data.show_image ?? true,
@@ -259,6 +261,19 @@ export default function EditPopupPage() {
                   placeholder="팝업 제목을 입력하세요"
                   value={formData.title}
                   onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  클릭 시 이동할 URL
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://example.com"
+                  value={formData.link_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, link_url: e.target.value }))}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>

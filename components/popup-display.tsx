@@ -14,6 +14,7 @@ interface Popup {
   title: string
   content: string
   image_url: string
+  link_url: string
   show_title: boolean
   show_content: boolean
   show_image: boolean
@@ -148,27 +149,53 @@ export default function PopupDisplay() {
           >
             {/* 이미지 영역 - 패딩 없음 */}
             {popup.show_image && popup.image_url && (
-              <img
-                src={popup.image_url}
-                alt={popup.title || '팝업 이미지'}
-                className="w-full h-auto block"
-              />
+              popup.link_url ? (
+                <a href={popup.link_url} target="_blank" rel="noopener noreferrer">
+                  <img
+                    src={popup.image_url}
+                    alt={popup.title || '팝업 이미지'}
+                    className="w-full h-auto block cursor-pointer hover:opacity-90 transition-opacity"
+                  />
+                </a>
+              ) : (
+                <img
+                  src={popup.image_url}
+                  alt={popup.title || '팝업 이미지'}
+                  className="w-full h-auto block"
+                />
+              )
             )}
 
             {/* 텍스트 콘텐츠 영역 */}
             <div className="p-5">
               {/* 제목 */}
               {popup.show_title && popup.title && (
-                <h2 className="text-lg font-bold text-gray-900 mb-2">
-                  {popup.title}
-                </h2>
+                popup.link_url ? (
+                  <a href={popup.link_url} target="_blank" rel="noopener noreferrer">
+                    <h2 className="text-lg font-bold text-gray-900 mb-2 cursor-pointer hover:text-orange-500 transition-colors">
+                      {popup.title}
+                    </h2>
+                  </a>
+                ) : (
+                  <h2 className="text-lg font-bold text-gray-900 mb-2">
+                    {popup.title}
+                  </h2>
+                )
               )}
 
               {/* 내용 */}
               {popup.show_content && popup.content && (
-                <div className="text-sm text-gray-700 whitespace-pre-wrap mb-4">
-                  {popup.content}
-                </div>
+                popup.link_url ? (
+                  <a href={popup.link_url} target="_blank" rel="noopener noreferrer">
+                    <div className="text-sm text-gray-700 whitespace-pre-wrap mb-4 cursor-pointer hover:text-orange-500 transition-colors">
+                      {popup.content}
+                    </div>
+                  </a>
+                ) : (
+                  <div className="text-sm text-gray-700 whitespace-pre-wrap mb-4">
+                    {popup.content}
+                  </div>
+                )
               )}
 
               {/* 하단 컨트롤 */}
