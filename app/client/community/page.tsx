@@ -28,6 +28,7 @@ interface Event {
   startDate: string
   endDate: string
   status: 'ongoing' | 'upcoming' | 'ended'
+  image_url?: string
 }
 
 export default function ClientCommunityPage() {
@@ -526,6 +527,51 @@ export default function ClientCommunityPage() {
                         placeholder="이벤트 설명을 입력하세요"
                       />
                     </div>
+                    
+                    {/* 이미지 업로드 */}
+                    <div>
+                      <label className="block text-xs sm:text-sm md:text-base lg:text-sm xl:text-base font-medium mb-1 sm:mb-2">이미지 (선택)</label>
+                      
+                      {formData.image_url ? (
+                        <div className="relative">
+                          <img
+                            src={formData.image_url}
+                            alt="이벤트 이미지"
+                            className="w-full max-h-48 object-contain border rounded-md"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setFormData({...formData, image_url: ''})}
+                            className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs rounded hover:bg-red-600"
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="block cursor-pointer">
+                          <div className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:border-orange-500 transition-colors">
+                            <PhotoIcon className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                            <p className="text-xs text-gray-600">클릭하여 이미지 업로드</p>
+                            <p className="text-xs text-gray-500 mt-1">최대 5MB</p>
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            disabled={uploadingImage}
+                            className="hidden"
+                          />
+                        </label>
+                      )}
+
+                      {uploadingImage && (
+                        <div className="text-center mt-2">
+                          <div className="inline-block w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                          <p className="text-xs text-gray-600 mt-1">업로드 중...</p>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm md:text-base lg:text-sm xl:text-base font-medium mb-1 sm:mb-2">시작일</label>
@@ -724,7 +770,17 @@ export default function ClientCommunityPage() {
                         <h4 className="font-medium text-sm sm:text-base md:text-lg lg:text-base xl:text-lg break-words">{event.title}</h4>
                       </div>
                       <p className="text-xs sm:text-sm md:text-base lg:text-sm xl:text-base text-gray-600 mb-1 break-words">{event.description}</p>
-                      <p className="text-xs text-gray-500">{event.startDate} ~ {event.endDate}</p>
+                      
+                      {/* 이미지 표시 */}
+                      {event.image_url && (
+                        <img 
+                          src={event.image_url} 
+                          alt={event.title}
+                          className="mt-2 max-w-xs w-full rounded border"
+                        />
+                      )}
+                      
+                      <p className="text-xs text-gray-500 mt-2">{event.startDate} ~ {event.endDate}</p>
                     </div>
                     <div className="flex gap-1 sm:gap-2 sm:ml-4">
                       <button
